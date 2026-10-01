@@ -1,10 +1,11 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><title>WashCRM 2.0</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><title>WashCRM 3.0</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f1f5f9;color:#0f172a}header{padding:calc(18px + env(safe-area-inset-top)) 16px 16px;background:#0f172a;color:#fff}.wrap{max-width:760px;margin:auto;padding:14px 14px 95px}.card{background:#fff;border-radius:18px;padding:15px;margin-bottom:10px;box-shadow:0 2px 14px #0000000c}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.kpi b{display:block;font-size:23px}.muted,.kpi span,label{font-size:12px;color:#64748b}button,input,select{font:inherit}button{border:0;border-radius:12px;padding:11px 13px;background:#0f172a;color:#fff;font-weight:700}button.light{background:#e2e8f0;color:#0f172a}button.red{background:#fee2e2;color:#991b1b}input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;margin:5px 0;background:#fff;font-size:16px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}h2{font-size:18px}.hide{display:none!important}.login{max-width:430px;margin:45px auto}.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1}.jobtop{display:flex;justify-content:space-between;gap:8px}.pill{display:inline-block;padding:5px 8px;border-radius:20px;background:#e2e8f0;font-size:11px;margin-top:6px}.actions{display:flex;gap:6px;margin-top:9px}.actions button{flex:1;font-size:12px;padding:9px}.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;font-size:27px;box-shadow:0 8px 25px #0004}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end}.sheet{width:100%;max-height:92vh;overflow:auto;background:#f8fafc;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom))}.svc{display:flex;gap:8px;align-items:center;padding:10px;background:#fff;border-radius:11px;margin:5px 0}.svc input{width:20px;margin:0}.svc span{flex:1}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px}.small{font-size:12px}.wash{border-left:4px solid #0f172a}.adminRow{display:flex;justify-content:space-between;gap:10px;align-items:center}.adminRow button{white-space:nowrap}.empty{text-align:center;color:#64748b;padding:22px}
 </style></head><body>
-<header><div class="topline"><div><b style="font-size:22px">💦 WashCRM</b><div class="small" id="sub">Коммерческая версия 2.0</div></div><button id="logout" class="light hide" onclick="logout()">Выйти</button></div></header>
+<header><div class="topline"><div><b style="font-size:22px">💦 WashCRM</b><div class="small" id="sub">Коммерческая версия 3.0</div></div><button id="logout" class="light hide" onclick="logout()">Выйти</button></div></header>
 <div class="wrap">
-<section id="login" class="login card"><h2>Вход</h2><label>Логин</label><input id="loginName" placeholder="admin или demo"><label>Пароль</label><input id="loginPass" type="password" placeholder="Пароль"><button style="width:100%;margin-top:7px" onclick="doLogin()">Войти</button><p class="muted">Демо: demo / 1234<br>Главный администратор: admin / admin</p></section>
+<section id="login" class="login card"><h2>Вход</h2><label>Логин</label><input id="loginName" placeholder="admin или demo"><label>Пароль</label><input id="loginPass" type="password" placeholder="Пароль"><button style="width:100%;margin-top:7px" onclick="doLogin()">Войти</button>
+<button class="light" style="width:100%;margin-top:8px" onclick="showClient()">Записаться на мойку</button><p class="muted">Демо: demo / 1234<br>Главный администратор: admin / admin</p></section>
 
 <section id="owner" class="hide">
 <div class="topline"><div><h2 id="washName" style="margin:4px 0">Автомойка</h2><div class="muted">Панель владельца / сотрудника</div></div><span class="pill" id="rolePill"></span></div>
@@ -13,7 +14,18 @@
 <div id="jobs"></div><button class="fab" onclick="openJob()">+</button>
 </section>
 
-<section id="admin" class="hide"><h2>Главный администратор</h2><div class="grid"><div class="card kpi"><b id="washCount">0</b><span>автомоек</span></div><div class="card kpi"><b id="activeCount">0</b><span>активных</span></div></div>
+<section id="clientBooking" class="hide"><div class="card">
+<h2>🚗 Онлайн-запись</h2><div class="muted">Выберите автомойку, услугу и удобное время</div>
+<label>Автомойка</label><select id="clientWash" onchange="renderSlots()"></select>
+<label>Дата</label><input id="clientDate" type="date" onchange="renderSlots()">
+<label>Услуга</label><select id="clientService"></select>
+<label>Свободное время</label><select id="clientTime"></select>
+<input id="clientName" placeholder="Ваше имя"><input id="clientPhone" type="tel" placeholder="Телефон">
+<div class="row"><input id="clientCar" placeholder="Автомобиль"><input id="clientPlate" placeholder="Госномер"></div>
+<button style="width:100%;margin-top:8px" onclick="clientBook()">Записаться</button>
+<button class="light" style="width:100%;margin-top:8px" onclick="backLogin()">Назад</button>
+<p class="muted">Демо: 09:00–21:00, интервал 30 минут. Занятое время скрывается.</p>
+</div></section><section id="admin" class="hide"><h2>Главный администратор</h2><div class="grid"><div class="card kpi"><b id="washCount">0</b><span>автомоек</span></div><div class="card kpi"><b id="activeCount">0</b><span>активных</span></div></div>
 <div class="card"><h2>Добавить автомойку</h2><input id="newWash" placeholder="Название автомойки"><div class="row"><input id="newLogin" placeholder="Логин"><input id="newPass" placeholder="Пароль"></div><button onclick="addWash()">Создать</button></div><div id="washes"></div></section>
 </div>
 
@@ -31,8 +43,8 @@ let db=JSON.parse(localStorage.getItem("washcrm2")||"null")||{washes:[{id:"demo"
 let session=null,filter="today";
 function save(){localStorage.setItem("washcrm2",JSON.stringify(db))}
 function doLogin(){let l=$("loginName").value.trim(),p=$("loginPass").value;if(l==="admin"&&p==="admin"){session={role:"admin"};showAdmin();return}let w=db.washes.find(x=>x.login===l&&x.pass===p);if(!w)return alert("Неверный логин или пароль");if(!w.active)return alert("Доступ к автомойке приостановлен владельцем сервиса");session={role:"owner",washId:w.id};showOwner()}
-function base(){["login","owner","admin"].forEach(x=>$(x).classList.add("hide"));$("logout").classList.remove("hide")}
-function logout(){session=null;["owner","admin"].forEach(x=>$(x).classList.add("hide"));$("login").classList.remove("hide");$("logout").classList.add("hide");$("sub").textContent="Коммерческая версия 2.0"}
+function base(){["login","owner","admin","clientBooking"].forEach(x=>$(x).classList.add("hide"));$("logout").classList.remove("hide")}
+function logout(){session=null;["owner","admin","clientBooking"].forEach(x=>$(x).classList.add("hide"));$("login").classList.remove("hide");$("logout").classList.add("hide");$("sub").textContent="Коммерческая версия 3.0"}
 function showAdmin(){base();$("admin").classList.remove("hide");$("sub").textContent="Главный администратор";renderAdmin()}
 function renderAdmin(){$("washCount").textContent=db.washes.length;$("activeCount").textContent=db.washes.filter(x=>x.active).length;$("washes").innerHTML=db.washes.map(w=>`<div class="card wash"><div class="adminRow"><div><b>${w.name}</b><div class="muted">Логин: ${w.login} · ${w.active?"Доступ активен":"Заблокирована"}</div></div><button class="${w.active?"red":"light"}" onclick="toggleWash('${w.id}')">${w.active?"Блокировать":"Включить"}</button></div></div>`).join("")}
 function addWash(){let name=$("newWash").value.trim(),login=$("newLogin").value.trim(),pass=$("newPass").value.trim();if(!name||!login||!pass)return alert("Заполните название, логин и пароль");if(db.washes.some(x=>x.login===login))return alert("Такой логин уже существует");db.washes.push({id:"w"+Date.now(),name,login,pass,active:true});save();["newWash","newLogin","newPass"].forEach(x=>$(x).value="");renderAdmin()}
@@ -46,6 +58,10 @@ function calc(){let n=0;document.querySelectorAll("#services input:checked").for
 function saveJob(){let sel=[...document.querySelectorAll("#services input:checked")].map(x=>S[+x.dataset.i]);if(!$("client").value.trim()||!sel.length)return alert("Укажите клиента и услугу");db.jobs.unshift({id:Date.now(),washId:session.washId,date:$("date").value,time:$("time").value,client:$("client").value.trim(),phone:$("phone").value.trim(),car:$("car").value.trim(),plate:$("plate").value.trim(),services:sel.map(x=>x[0]),price:sel.reduce((a,x)=>a+x[1],0),status:"Записан",paid:false});save();closeJob();renderJobs()}
 function nextStatus(id){let j=db.jobs.find(x=>x.id===id&&x.washId===session.washId),a=["Записан","В работе","Готов","Оплачен"],i=a.indexOf(j.status);j.status=a[Math.min(i+1,3)];j.paid=j.status==="Оплачен";save();renderJobs()}
 function delJob(id){if(confirm("Удалить запись?")){db.jobs=db.jobs.filter(x=>x.id!==id);save();renderJobs()}}
+function showClient(){["login","owner","admin"].forEach(x=>$(x).classList.add("hide"));$("clientBooking").classList.remove("hide");$("logout").classList.add("hide");$("sub").textContent="Онлайн-запись клиента";$("clientDate").value=today();$("clientWash").innerHTML=db.washes.filter(x=>x.active).map(w=>`<option value="${w.id}">${w.name}</option>`).join("");$("clientService").innerHTML=S.map((x,i)=>`<option value="${i}">${x[0]} — ${money(x[1])}</option>`).join("");renderSlots()}
+function backLogin(){$("clientBooking").classList.add("hide");$("login").classList.remove("hide");$("sub").textContent="Коммерческая версия 3.0"}
+function renderSlots(){let wid=$("clientWash").value,d=$("clientDate").value;if(!wid||!d)return;let busy=new Set(db.jobs.filter(x=>x.washId===wid&&x.date===d).map(x=>x.time)),a=[];for(let h=9;h<21;h++)for(let m of [0,30]){let t=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");if(!busy.has(t))a.push(t)}$("clientTime").innerHTML=a.length?a.map(t=>`<option>${t}</option>`).join(""):`<option value="">Свободного времени нет</option>`}
+function clientBook(){let wid=$("clientWash").value,d=$("clientDate").value,t=$("clientTime").value,n=$("clientName").value.trim(),ph=$("clientPhone").value.trim();if(!wid||!d||!t||!n||!ph)return alert("Укажите имя, телефон, дату и время");if(db.jobs.some(x=>x.washId===wid&&x.date===d&&x.time===t)){renderSlots();return alert("Это время уже занято")};let s=S[+$("clientService").value];db.jobs.unshift({id:Date.now(),washId:wid,date:d,time:t,client:n,phone:ph,car:$("clientCar").value.trim(),plate:$("clientPlate").value.trim(),services:[s[0]],price:s[1],status:"Записан",paid:false,source:"client"});save();alert("Готово! Вы записаны на "+d+" в "+t);["clientName","clientPhone","clientCar","clientPlate"].forEach(x=>$(x).value="");renderSlots()}
 $("services").innerHTML=S.map((x,i)=>`<label class="svc"><input type="checkbox" data-i="${i}" onchange="calc()"><span>${x[0]}</span><b>${money(x[1])}</b></label>`).join("");
 save();
 </script></body></html>
